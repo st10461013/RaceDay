@@ -1,0 +1,10 @@
+## Users 
+
+- UserID (PK)
+- Role (Organiser / Participant)
+- FirstName
+- LastName
+- Email (unique)
+- PasswordHash
+- PhoneNumber
+- CreatedAt
