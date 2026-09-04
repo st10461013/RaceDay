@@ -1,0 +1,8 @@
+## Categories
+
+| HTTP Method | Route | Description | Role Required | Request Body | Expected Response |
+|---|---|---|---|---|---|
+| GET | /api/events/{eventId}/categories | List all categories for an event | Public | — | `200 OK` — array of categories |
+| POST | /api/events/{eventId}/categories | Add a category to an event | Organiser | `{ categoryName, distanceKM, maxParticipants, entryFee }` | `201 Created` — new category object |
+| PUT | /api/categories/{categoryId} | Update a category | Organiser | `{ categoryName, distanceKM, maxParticipants, entryFee }` | `200 OK` — updated category object |
+| DELETE | /api/categories/{categoryId} | Delete a category | Organiser | — | `204 No Content` |
