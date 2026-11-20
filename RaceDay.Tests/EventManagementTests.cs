@@ -13,7 +13,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
 
     // ---------- Events: create ----------
 
-    [Fact]
     public async Task Organiser_CanCreateEvent()
     {
         var (organiser, user) = await CreateOrganiserAsync();
@@ -40,7 +39,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(user.UserId, created.OrganiserId);
     }
 
-    [Fact]
     public async Task CreateEvent_WithMissingFields_ReturnsBadRequest()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -60,7 +58,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact]
     public async Task CreateEvent_WithInvalidEventType_ReturnsBadRequest()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -79,7 +76,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
 
     // ---------- Events: browse ----------
 
-    [Fact]
     public async Task BothRoles_CanViewEvents()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -98,7 +94,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         }
     }
 
-    [Fact]
     public async Task GetEvent_ThatDoesNotExist_ReturnsNotFound()
     {
         var response = await NewClient().GetAsync("/api/events/999999");
@@ -154,7 +149,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
 
     // ---------- Events: update ----------
 
-    [Fact]
     public async Task Organiser_CanUpdateTheirOwnEvent()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -181,7 +175,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal("Renamed Race", fetched.EventName);
     }
 
-    [Fact]
     public async Task UpdateEvent_ThatDoesNotExist_ReturnsNotFound()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -191,7 +184,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact]
     public async Task Organiser_CannotUpdateAnotherOrganisersEvent()
     {
         var (owner, _) = await CreateOrganiserAsync();
@@ -220,7 +212,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.NotFound, (await organiser.GetAsync($"/api/events/{created.EventId}")).StatusCode);
     }
 
-    [Fact]
     public async Task DeleteEvent_RemovesItsRoutes_Categories_EnrolmentsAndResults()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -253,7 +244,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.OK, (await owner.GetAsync($"/api/events/{created.EventId}")).StatusCode);
     }
 
-    [Fact]
     public async Task DeleteEvent_ThatDoesNotExist_ReturnsNotFound()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -265,7 +255,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
 
     // ---------- Categories ----------
 
-    [Fact]
     public async Task Organiser_CanDefineCategories_AndAnyoneCanViewThem()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -308,7 +297,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.BadRequest, negativeFee.StatusCode);
     }
 
-    [Fact]
     public async Task CreateCategory_WithDuplicateName_ReturnsConflict()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -342,7 +330,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.NotFound, (await organiser.GetAsync(url)).StatusCode);
     }
 
-    [Fact]
     public async Task DeleteCategory_WithEnrolments_ReturnsConflict()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -356,7 +343,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.Conflict, delete.StatusCode);
     }
 
-    [Fact]
     public async Task UpdateCategory_BelowCurrentEnrolments_ReturnsConflict()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -377,7 +363,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.Conflict, update.StatusCode);
     }
 
-    [Fact]
     public async Task Organiser_CannotManageCategoriesOfAnotherOrganisersEvent()
     {
         var (owner, _) = await CreateOrganiserAsync();
@@ -404,7 +389,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
 
     // ---------- Routes ----------
 
-    [Fact]
     public async Task Organiser_CanAddUpdateAndDeleteRoutes_AndAnyoneCanListThem()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -434,7 +418,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.NotFound, (await organiser.GetAsync($"/api/routes/{route.RouteId}")).StatusCode);
     }
 
-    [Fact]
     public async Task CreateRoute_WithInvalidValues_ReturnsBadRequest()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -448,7 +431,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.BadRequest, badUrl.StatusCode);
     }
 
-    [Fact]
     public async Task Organiser_CannotManageRoutesOfAnotherOrganisersEvent()
     {
         var (owner, _) = await CreateOrganiserAsync();
@@ -468,7 +450,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
 
     // ---------- Weather ----------
 
-    [Fact]
     public async Task BothRoles_CanViewTheWeatherForAnEvent()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -489,7 +470,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         }
     }
 
-    [Fact]
     public async Task Weather_ForAnEventWithoutALocationCode_ReturnsNotFound()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -501,7 +481,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact]
     public async Task Weather_ForAnUnknownLocationCode_ReturnsNotFound()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -525,7 +504,6 @@ public class EventManagementTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
     }
 
-    [Fact]
     public async Task Weather_ForAnEventThatDoesNotExist_ReturnsNotFound()
     {
         var (participant, _) = await CreateParticipantAsync();
