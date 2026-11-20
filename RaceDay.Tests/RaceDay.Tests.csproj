@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RaceDay.Api\RaceDay.Api.csproj" />
+  </ItemGroup>
+
+  <!-- The Swagger descriptions come from the API's XML comments; make sure that file sits next to the API dll. -->
+  <Target Name="CopyApiXmlDocumentation" AfterTargets="Build">
+    <ItemGroup>
+      <ApiXmlDocumentation Include="..\RaceDay.Api\bin\$(Configuration)\net8.0\RaceDay.Api.xml" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ApiXmlDocumentation)" DestinationFolder="$(OutDir)" Condition="Exists('%(FullPath)')" />
+  </Target>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="System.Net" />
+    <Using Include="System.Net.Http.Json" />
+  </ItemGroup>
+
+</Project>
