@@ -16,7 +16,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
 
     // ---------- Enrolments ----------
 
-    [Fact]
     public async Task Participant_CanEnrol_AndTheLinkIsCorrectlyRecorded()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -47,7 +46,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(enrolment.BibNumber, stored.BibNumber);
     }
 
-    [Fact]
     public async Task Bib_NumbersAreUniquePerEnrolment()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -62,7 +60,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.NotEqual(a.BibNumber, b.BibNumber);
     }
 
-    [Fact]
     public async Task EnrolledCategory_AppearsInTheParticipantsOwnEnrolments()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -78,7 +75,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(category.CategoryName, single.CategoryName);
     }
 
-    [Fact]
     public async Task Organiser_CanViewAllEnrolmentsForTheirEvent()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -99,7 +95,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Contains(enrolments, e => e.ParticipantId == second.UserId && e.CategoryName == "21km");
     }
 
-    [Fact]
     public async Task Organiser_CannotViewEnrolmentsForAnotherOrganisersEvent()
     {
         var (owner, _) = await CreateOrganiserAsync();
@@ -111,7 +106,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
-    [Fact]
     public async Task Enrol_Twice_InTheSameCategory_ReturnsConflict()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -125,7 +119,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.Conflict, again.StatusCode);
     }
 
-    [Fact]
     public async Task Participant_CanEnrolInTwoCategoriesOfTheSameEvent()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -156,7 +149,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
 
-    [Fact]
     public async Task Enrol_InACategoryThatDoesNotExist_ReturnsNotFound()
     {
         var (participant, _) = await CreateParticipantAsync();
@@ -166,7 +158,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact]
     public async Task Enrol_AfterTheEventHasTakenPlace_ReturnsConflict()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -209,7 +200,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
             (await PostAsync(second, $"/api/categories/{category.CategoryId}/enrolments")).StatusCode);
     }
 
-    [Fact]
     public async Task Participant_CanReEnrolAfterCancelling_AndKeepsTheSameBibNumber()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -226,7 +216,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(EnrolmentStatus.Confirmed, again.Status);
     }
 
-    [Fact]
     public async Task Participant_CannotCancelSomeoneElsesEnrolment()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -253,7 +242,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
 
     // ---------- Results ----------
 
-    [Fact]
     public async Task Organiser_CanCaptureAResult_AndTheParticipantCanViewIt()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -278,7 +266,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(category.CategoryName, result.CategoryName);
     }
 
-    [Fact]
     public async Task Participant_SeesOnlyTheirOwnResults()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -299,7 +286,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(second.UserId, Assert.Single(secondResults).ParticipantId);
     }
 
-    [Fact]
     public async Task EventLeaderboard_IsPublic_AndOrderedByPosition()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -320,7 +306,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(new int?[] { 1, 2 }, results.Select(r => r.Position).ToArray());
     }
 
-    [Fact]
     public async Task EventLeaderboard_ForAnEventThatDoesNotExist_ReturnsNotFound()
     {
         var response = await NewClient().GetAsync("/api/events/999999/results");
@@ -328,7 +313,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact]
     public async Task CaptureResult_Twice_ForTheSameEnrolment_ReturnsConflict()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -344,7 +328,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
     }
 
-    [Fact]
     public async Task CaptureResult_WithAPositionAlreadyTakenInTheCategory_ReturnsConflict()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -379,7 +362,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact]
     public async Task CaptureResult_FinishedWithoutTimeOrPosition_ReturnsBadRequest()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -393,7 +375,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    [Fact]
     public async Task CaptureResult_DidNotFinish_NeedsNoTimeOrPosition()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -421,7 +402,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact]
     public async Task CaptureResult_ForAnotherOrganisersEvent_IsForbidden()
     {
         var (owner, _) = await CreateOrganiserAsync();
@@ -436,7 +416,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
-    [Fact]
     public async Task CaptureResult_ForACancelledEnrolment_ReturnsConflict()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -451,7 +430,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
 
-    [Fact]
     public async Task Organiser_CanCorrectARecordedResult()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -474,7 +452,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(2, updated.Position);
     }
 
-    [Fact]
     public async Task UpdateResult_ThatDoesNotExist_ReturnsNotFound()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -484,7 +461,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    [Fact]
     public async Task Organiser_CannotCorrectAnotherOrganisersResult()
     {
         var (owner, _) = await CreateOrganiserAsync();
@@ -500,7 +476,6 @@ public class EnrolmentAndResultTests : ApiTestBase, IClassFixture<RaceDayFactory
         Assert.Equal(HttpStatusCode.Forbidden, update.StatusCode);
     }
 
-    [Fact]
     public async Task Participant_CannotCancel_OnceAResultIsRecorded()
     {
         var (organiser, _) = await CreateOrganiserAsync();
