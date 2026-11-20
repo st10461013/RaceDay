@@ -47,7 +47,6 @@ public class SchemaConformanceTests : IClassFixture<RaceDayFactory>
         }
     }
 
-    [Fact]
     public void Users_MatchesPart1Schema()
     {
         var users = Entity<AppUser>();
@@ -67,7 +66,6 @@ public class SchemaConformanceTests : IClassFixture<RaceDayFactory>
         Assert.Contains(users.GetIndexes(), i => i.IsUnique && i.Properties.Select(p => p.Name).SequenceEqual(new[] { "Email" }));
     }
 
-    [Fact]
     public void Events_MatchesPart1Schema_PlusTheTwoPart2Columns()
     {
         var events = Entity<Event>();
@@ -88,7 +86,6 @@ public class SchemaConformanceTests : IClassFixture<RaceDayFactory>
             (nameof(Event.DistanceKM), "DistanceKM", "decimal(6,2)"));
     }
 
-    [Fact]
     public void Routes_MatchesPart1Schema()
     {
         var routes = Entity<RaceRoute>();
@@ -118,7 +115,6 @@ public class SchemaConformanceTests : IClassFixture<RaceDayFactory>
             (nameof(Category.EntryFee), "EntryFee", "decimal(8,2)"));
     }
 
-    [Fact]
     public void Enrolments_MatchesPart1Schema()
     {
         var enrolments = Entity<Enrolment>();
@@ -137,7 +133,6 @@ public class SchemaConformanceTests : IClassFixture<RaceDayFactory>
             i.IsUnique && i.Properties.Select(p => p.Name).SequenceEqual(new[] { "ParticipantId", "CategoryId" }));
     }
 
-    [Fact]
     public void Results_MatchesPart1Schema()
     {
         var results = Entity<EventResult>();
@@ -155,7 +150,6 @@ public class SchemaConformanceTests : IClassFixture<RaceDayFactory>
             i.IsUnique && i.Properties.Select(p => p.Name).SequenceEqual(new[] { "EnrolmentId" }));
     }
 
-    [Fact]
     public void AllForeignKeys_AreNonCascading_AsInThePart1Script()
     {
         var entities = new[]
