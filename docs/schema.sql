@@ -137,3 +137,26 @@ INSERT INTO dbo.Results (EnrolmentID, FinishTime, Position, Status) VALUES
 (1, '04:32:10', 214, 'Finished'),
 (4, '01:58:47', 89,  'Finished');
 GO
+
+IF COL_LENGTH('dbo.Events', 'EventType') IS NULL
+BEGIN
+    ALTER TABLE dbo.Events
+        ADD EventType VARCHAR(20) NOT NULL
+            CONSTRAINT DF_Events_EventType DEFAULT 'Run'
+            CONSTRAINT CK_Events_EventType CHECK (EventType IN ('Run', 'Walk', 'Cycle'));
+END
+GO
+
+IF COL_LENGTH('dbo.Events', 'DistanceKM') IS NULL
+BEGIN
+    ALTER TABLE dbo.Events
+        ADD DistanceKM DECIMAL(6,2) NOT NULL
+            CONSTRAINT DF_Events_DistanceKM DEFAULT 0;
+END
+GO
+
+
+IF COL_LENGTH('dbo.Events', 'BannerImageUrl') IS NULL
+    ALTER TABLE dbo.Events ADD BannerImageUrl VARCHAR(1000) NULL;
+IF COL_LENGTH('dbo.Users', 'ProfileImageUrl') IS NULL
+    ALTER TABLE dbo.Users ADD ProfileImageUrl VARCHAR(1000) NULL;
