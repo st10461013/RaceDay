@@ -15,7 +15,6 @@ public class RoleAccessTests : ApiTestBase, IClassFixture<RaceDayFactory>
 
     // ---------- Participant attempting Organiser functionality ----------
 
-    [Fact]
     public async Task Participant_CannotCreateUpdateOrDeleteEvents()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -31,7 +30,6 @@ public class RoleAccessTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.Forbidden, delete.StatusCode);
     }
 
-    [Fact]
     public async Task Participant_CannotManageCategoriesOrRoutes()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -62,7 +60,6 @@ public class RoleAccessTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.Forbidden, createRoute.StatusCode);
     }
 
-    [Fact]
     public async Task Participant_CannotViewAnEventsEnrolments_OrManageResults()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -80,7 +77,6 @@ public class RoleAccessTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.Forbidden, update.StatusCode);
     }
 
-    [Fact]
     public async Task Participant_CannotFilterEventsByOrganiserOwnership()
     {
         var (participant, _) = await CreateParticipantAsync();
@@ -92,7 +88,6 @@ public class RoleAccessTests : ApiTestBase, IClassFixture<RaceDayFactory>
 
     // ---------- Organiser attempting Participant functionality ----------
 
-    [Fact]
     public async Task Organiser_CannotEnrolInACategory()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -104,7 +99,6 @@ public class RoleAccessTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
-    [Fact]
     public async Task Organiser_CannotUseParticipantOnlyEndpoints()
     {
         var (organiser, _) = await CreateOrganiserAsync();
@@ -120,7 +114,6 @@ public class RoleAccessTests : ApiTestBase, IClassFixture<RaceDayFactory>
 
     // ---------- Anonymous callers ----------
 
-    [Fact]
     public async Task Anonymous_CannotUseAnyOrganiserOrParticipantAction()
     {
         var client = NewClient();
@@ -148,7 +141,6 @@ public class RoleAccessTests : ApiTestBase, IClassFixture<RaceDayFactory>
 
     // ---------- The role comes from the server-side session, not from the client ----------
 
-    [Fact]
     public async Task ClientCannotElevateItsRole_ByRegisteringAsParticipantThenCallingOrganiserEndpoints()
     {
         var client = NewClient();
@@ -161,7 +153,6 @@ public class RoleAccessTests : ApiTestBase, IClassFixture<RaceDayFactory>
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
-    [Fact]
     public async Task LoggingInAsADifferentUser_ReplacesTheSessionRole()
     {
         var client = NewClient();
