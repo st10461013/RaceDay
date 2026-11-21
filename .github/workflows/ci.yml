@@ -1,0 +1,55 @@
+name: RaceDay CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-structure:
+    name: Validate repository structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check required files and folders
+        run: |
+          missing=0
+          for path in \
+            README.md RaceDay.sln docker-compose.yml Dockerfile.api Dockerfile.mvc \
+            docs/ERD.png docs/schema.sql \
+            RaceDay.Api/RaceDay.Api.csproj RaceDay.Api/Program.cs \
+            RaceDay.Mvc/RaceDay.Mvc.csproj RaceDay.Mvc/Program.cs \
+            RaceDay.Mvc/Views/Organiser RaceDay.Mvc/Views/Participant RaceDay.Mvc/Views/Auth \
+            RaceDay.Tests/RaceDay.Tests.csproj; do
+            if [ -e "$path" ]; then echo "OK      $path"; else echo "MISSING $path"; missing=1; fi
+          done
+          ls docs/API*plan* >/dev/null 2>&1 && echo "OK      docs/API plan files" || { echo "MISSING docs/API plan files"; missing=1; }
+          exit $missing
+
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    needs: validate-structure
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore
+        run: dotnet restore RaceDay.sln
+      - name: Build (API, MVC and tests)
+        run: dotnet build RaceDay.sln --configuration Release --no-restore
+      - name: Test
+        run: dotnet test RaceDay.Tests/RaceDay.Tests.csproj --configuration Release --no-build --verbosity normal
+
+  docker-build:
+    name: Build Docker images
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build API image
+        run: docker build -f Dockerfile.api -t raceday-api:ci .
+      - name: Build MVC image
+        run: docker build -f Dockerfile.mvc -t raceday-mvc:ci .
