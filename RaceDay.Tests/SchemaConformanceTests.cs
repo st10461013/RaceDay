@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RaceDay.Api.Data;
 using RaceDay.Api.Models;
 using RaceDay.Tests.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace RaceDay.Tests;
 
