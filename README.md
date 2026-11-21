@@ -3,6 +3,8 @@ A full-stack web-based event management system for the South African road runnin
 organising events and taking part in them.
 
 This repository holds Part 1 and Part 2 of my three-part project for Programming 2B (PROG6212) in Diploma in Software Development at Rosebank Intenational.
+Silindokuhle Gqukani
+ST10461013
 
 ## Part 1 deliverables (`/docs`)
 The documents are in `docs/`: the ERD (`ERD.png`), the API plan (`API plan - *.md`) and the SQL script (`schema.sql`).
@@ -103,7 +105,7 @@ Small additions beyond the plan: `GET /api/routes/{routeId}` and `GET /api/categ
 `201 Created` location headers) and the logout endpoint. `GET /api/events` lists upcoming events by default, as the plan
 says; add `includePast=true` to see all. Its filters are `location`, `date`, `type`, `search` and `mine`.
 
-#### Where the implementation differs from the Part 1 plan (and why)
+#### Where the implementation differs from the Part 1 plan 
 
 | Plan | Implementation | Reason |
 |---|---|---|
