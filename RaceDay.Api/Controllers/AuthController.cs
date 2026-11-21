@@ -6,11 +6,10 @@ using RaceDay.Api.Auth;
 using RaceDay.Api.Data;
 using RaceDay.Api.Dtos;
 using RaceDay.Api.Models;
-using RaceDay.Api.Services;
 
 namespace RaceDay.Api.Controllers;
 
-/// Registration, login and logout.
+/// <summary>Registration, login and logout.</summary>
 [Route("api/auth")]
 public class AuthController : ApiControllerBase
 {
@@ -25,15 +24,15 @@ public class AuthController : ApiControllerBase
         _config = config;
     }
 
-    /// Registers a new Organiser or Participant account (Public).
+    /// <summary>Registers a new Organiser or Participant account (Public).</summary>
     /// <remarks>
-    /// Expects role, firstName, lastName, email, password and optionally phoneNumber. Participants register freely.
-    /// Organiser accounts can create and manage events, so they additionally need the organiser access code.
+    /// Expects role, firstName, lastName, email, password and optionally phoneNumber. Participant accounts register freely.
+    /// Organiser accounts additionally need the configured organiser access code.
     /// The password is stored only as a salted PBKDF2 hash.
     /// </remarks>
     /// <response code="201">Account created. Returns the new user object (never the password).</response>
-    /// <response code="400">Validation failed (missing fields, invalid email, weak password, invalid role).</response>
-    /// <response code="403">Registering as Organiser without a valid access code.</response>
+    /// <response code="400">Validation failed (missing fields, invalid email, weak password or invalid role).</response>
+    /// <response code="403">Registering as an Organiser without a valid access code.</response>
     /// <response code="409">An account with this email already exists.</response>
     [HttpPost("register")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
@@ -76,18 +75,16 @@ public class AuthController : ApiControllerBase
         }
         catch (DbUpdateException)
         {
-            // Lost a race against another registration with the same email (unique index).
             return ConflictProblem("An account with this email address already exists.");
         }
 
         return Created("/api/users/me", UserResponse.From(user));
     }
 
-    /// Logs a user in and starts a session (Public).
+    /// <summary>Logs a user in and starts a session (Public).</summary>
     /// <remarks>
     /// Expects email and password. On success the user id and role are stored in the server-side session and a
-    /// session cookie is returned; later requests are authenticated by that cookie. (The Part 1 plan issued a JWT;
-    /// the Part 2 brief requires session management, so the response is the user object without a token.)
+    /// session cookie is returned; later requests are authenticated by that cookie.
     /// </remarks>
     /// <response code="200">Logged in. Returns the user object including the role.</response>
     /// <response code="400">Validation failed.</response>
@@ -101,13 +98,11 @@ public class AuthController : ApiControllerBase
         var email = NormaliseEmail(request.Email);
         var user = await _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
 
-        // One generic message so the API does not reveal which emails are registered.
         if (user is null || !_hasher.Verify(request.Password, user.PasswordHash))
         {
             return UnauthorizedProblem("Invalid email or password.");
         }
 
-        // Start from a clean session to avoid session fixation.
         HttpContext.Session.Clear();
         HttpContext.Session.SetInt32(SessionKeys.UserId, user.UserId);
         HttpContext.Session.SetString(SessionKeys.Role, user.Role.ToString());
@@ -115,7 +110,7 @@ public class AuthController : ApiControllerBase
         return Ok(UserResponse.From(user));
     }
 
-    /// <summar>Logs the current user out and ends the session (Organiser or Participant).</summary>
+    /// <summary>Logs the current user out and ends the session (Organiser or Participant).</summary>
     /// <response code="204">Session ended.</response>
     /// <response code="401">Not logged in.</response>
     [HttpPost("logout")]
