@@ -21,7 +21,7 @@ public class SchemaConformanceTests : IClassFixture<RaceDayFactory>
         _factory = factory;
     }
 
-    private static string? Annotation(IAnnotatable item, string name) => item.FindAnnotation(name)?.Value as string;
+    private static string? Annotation(IReadOnlyAnnotatable item, string name) => item.FindAnnotation(name)?.Value as string;
 
     private IEntityType Entity<T>()
     {
