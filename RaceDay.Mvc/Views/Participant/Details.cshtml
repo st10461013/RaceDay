@@ -1,14 +1,14 @@
 @model JsonElement
 @{
     ViewData["Title"] = "Event details";
+
     var cats = ViewBag.Categories is JsonElement categories
         ? categories.EnumerateArray().ToList()
         : new List<JsonElement>();
 }
-
-@if (Model.HasValue)
+@if (Model.ValueKind != JsonValueKind.Undefined && Model.ValueKind != JsonValueKind.Null)
 {
-    var e = Model.Value;
+    var e = Model;
     var banner = e.TryGetProperty("bannerImageUrl", out var b) ? b.GetString() : null;
 
     <a asp-action="Index" class="text-decoration-none">← All events</a>
@@ -22,34 +22,43 @@
         <span class="pill align-self-start">
             @e.GetProperty("eventType").GetString()
         </span>
+
         <h1 class="section-title mt-3">
             @e.GetProperty("eventName").GetString()
         </h1>
+
         <p class="muted">
             📍 @e.GetProperty("eventDate").ToString() &nbsp; 📍 @e.GetProperty("location").GetString()
             &nbsp; @e.GetProperty("distanceKM").GetDecimal() km
         </p>
+
         <p>@e.GetProperty("description").GetString()</p>
 
         <h2 class="section-title mt-4">Available categories</h2>
+
         <div class="row g-3">
             @foreach (var c in cats)
             {
                 <div class="col-md-6">
                     <div class="card p-4">
                         <h3 class="h5">@c.GetProperty("categoryName").GetString()</h3>
+
                         <p class="muted">
                             @c.GetProperty("distanceKM").GetDecimal() km &nbsp; · &nbsp;
                             R @c.GetProperty("entryFee").GetDecimal()
                             &nbsp; · &nbsp;
                             @c.GetProperty("enrolledCount").GetInt32()/@c.GetProperty("maxParticipants").GetInt32() places
                         </p>
+
                         <form asp-action="Enrol" method="post">
                             <input type="hidden" name="id" value="@c.GetProperty("categoryId").GetInt32()" />
                             <input type="hidden" name="eventId" value="@e.GetProperty("eventId").GetInt32()" />
-                            @{ 
-                                var full = c.GetProperty("enrolledCount").GetInt32() >= c.GetProperty("maxParticipants").GetInt32();
+
+                            @{
+                                var full = c.GetProperty("enrolledCount").GetInt32()
+                                    >= c.GetProperty("maxParticipants").GetInt32();
                             }
+
                             <button class="btn btn-primary" disabled="@full">Enrol now</button>
                         </form>
                     </div>
