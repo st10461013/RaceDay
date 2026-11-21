@@ -115,7 +115,7 @@ public class AuthController : ApiControllerBase
         return Ok(UserResponse.From(user));
     }
 
-    /// Logs the current user out and ends the session (Organiser or Participant).</summary>
+    /// <summar>Logs the current user out and ends the session (Organiser or Participant).</summary>
     /// <response code="204">Session ended.</response>
     /// <response code="401">Not logged in.</response>
     [HttpPost("logout")]
